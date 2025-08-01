@@ -4,8 +4,12 @@ package com.example.springcloudapp.Services;
 import com.example.springcloudapp.Dtos.FakeStoreProductDto;
 import com.example.springcloudapp.Models.Category;
 import com.example.springcloudapp.Models.Product;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class FakeStoreProductService implements ProductService {
@@ -19,11 +23,14 @@ public class FakeStoreProductService implements ProductService {
     @Override
     public Product getSingleProduct(Long id) {
 
-        FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject(
-                "https://fakestoreapi.com/products/" +id, FakeStoreProductDto.class);
+        ResponseEntity <FakeStoreProductDto> responseEntity= restTemplate.getForEntity(
+                "http://fakestoreapi.com/products/" +id, FakeStoreProductDto.class);
 
+        
+
+
+        FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
         return fakeStoreProductDto.toProduct();
-
 
     }
 
@@ -43,5 +50,18 @@ public class FakeStoreProductService implements ProductService {
 
         return response.toProduct();
 
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+
+        FakeStoreProductDto[] response = restTemplate.getForObject("https://fakestoreapi.com/products",
+                FakeStoreProductDto[].class);
+
+        List<Product> products = new ArrayList<>();
+        for (FakeStoreProductDto fakeStoreProductDto : response) {
+            products.add(fakeStoreProductDto.toProduct());
+        }
+        return products;
     }
 }

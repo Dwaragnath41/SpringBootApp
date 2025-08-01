@@ -2,9 +2,15 @@ package com.example.springcloudapp.Controller;
 
 
 import com.example.springcloudapp.Dtos.CreateProductRequestDto;
+import com.example.springcloudapp.Dtos.ErrorDto;
 import com.example.springcloudapp.Models.Product;
 import com.example.springcloudapp.Services.ProductService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ProductController {
@@ -16,7 +22,13 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public void getAllProducts(){
+    public ResponseEntity<List<Product>> getAllProducts(){
+
+        List<Product> responseData =  productService.getAllProducts();
+
+        ResponseEntity<List<Product>> response = new ResponseEntity<>(responseData, HttpStatusCode.valueOf(202));
+
+        return response;
 
     }
 
@@ -33,7 +45,7 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public Product createProduct(@RequestBody CreateProductRequestDto createProductRequestDto){
+    public Product createProduct(@RequestBody CreateProductRequestDto createProductRequestDto) {
 
         return productService.createProduct(
                 createProductRequestDto.getTitle(),
@@ -43,9 +55,7 @@ public class ProductController {
                 createProductRequestDto.getCategory()
 
         );
-        
     }
-
 
 
 
